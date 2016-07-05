@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- Root Context: defines shared resources visible to all other web components -->
+
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" destroy-method="destroy">
+        <property name="persistenceUnitManager">
+            <bean class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+                <property name="persistenceXmlLocations">
+                    <list>
+                        <value>classpath:/META-INF/persistence.xml</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="persistenceUnitName" value="itst-academy" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="jpaDialect" ref="jpaDialect" />
+        <property name="jpaPropertyMap" ref="hibernateCfg" />
+    </bean>
+
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+    <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="jpaDialect" ref="jpaDialect" />
+        <property name="defaultTimeout" value="${jdbc.transaction.timeout}" />
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <util:map id="hibernateCfg">
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+        <entry key="hibernate.archive.autodetection" value="class" />
+        <entry key="hibernate.connection.provider_class" value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
+        <entry key="connection.encryptor_registered_name" value="configurationHibernateEncryptor" />
+        <!--  Data source -->
+        <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+        <entry key="hibernate.connection.username" value="${jdbc.username}" />
+        <entry key="hibernate.connection.password" value="${jdbc.password}" />
+        <entry key="hibernate.connection.url" value="${jdbc.url}" />
+        <entry key="hibernate.connection.release_mode" value="after_statement" />
+
+        <entry key="connection.autoReconnect" value="true" />
+        <entry key="connection.autoReconnectForPools" value="true" />
+        <entry key="connection.is-connection-validation-required" value="true" />
+        <entry key="connection.pool_size" value="5" />
+        <entry key="hibernate.c3p0.min_size" value="5" />
+        <entry key="hibernate.c3p0.max_size" value="10" />
+        <entry key="hibernate.c3p0.timeout" value="5000" />
+        <entry key="hibernate.c3p0.checkoutTimeout" value="5000" />
+        <entry key="hibernate.c3p0.acquireRetryAttempts" value="3" />
+        <entry key="hibernate.c3p0.acquireRetryDelay" value="2000" />
+        <entry key="hibernate.c3p0.max_statements" value="-1" />
+        <entry key="hibernate.c3p0.maxStatementsPerConnection" value="-1" />
+
+        <entry key="hibernate.c3p0.idle_test_period" value="100" />
+        <entry key="hibernate.c3p0.preferredTestQuery" value="SELECT 1 FROM dual" />
+        <entry key="hibernate.c3p0.testConnectionOnCheckin" value="false" />
+        <entry key="hibernate.c3p0.testConnectionOnCheckout" value="true" />
+        <!-- Determines how many connections at a time c3p0 will try to acquire when the pool is exhausted -->
+        <entry key="hibernate.c3p0.acquire_increment" value="1" />
+        <entry key="hibernate.c3p0.unreturnedConnectionTimeout" value="30" /> <!-- Seconds -->
+        <entry key="hibernate.c3p0.debugUnreturnedConnectionStackTraces" value="true" />
+
+        <entry key="hibernate.query.factory_class" value="org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory" />
+        <entry key="hibernate.transaction.factory_class" value="org.hibernate.transaction.JDBCTransactionFactory" />
+        <!-- Hibernate cache -->
+        <entry key="hibernate.cache.use_query_cache" value="false" />
+        <entry key="hibernate.cache.use_second_level_cache" value="false" />
+        <entry key="hibernate.default_batch_fetch_size" value="16" />
+        <entry key="hibernate.jdbc.batch_size" value="5" />
+        <entry key="hibernate.max_fetch_depth" value="3" />
+        <!-- SQL to stdout logging -->
+        <entry key="hibernate.show_sql" value="false" />
+        <entry key="hibernate.format_sql" value="false" />
+        <entry key="hibernate.use_sql_comments" value="false" />
+        <!-- Schema handling -->
+        <entry key="hibernate.hbm2ddl.auto" value="validate" />
+        <entry key="hibernate.jdbc.fetch_size" value="5000" />
+    </util:map>
+
+</beans>
